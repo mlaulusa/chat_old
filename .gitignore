@@ -1,4 +1,4 @@
 node_modules
 *.log
+*.db
 app/bower_components
-db/*

@@ -7,6 +7,8 @@ var express = require('express'),
 	db = new sqlite3.Database('db/people.db'),
 	PORT = 8888;
 
+app.bcrypt = require('bcrypt');
+
 app.use(logger('dev'));
 app.use(express.static('app'));
 app.use(express.static('public'));
@@ -15,13 +17,7 @@ app.use(bodyParser.urlencoded({'extended': 'true'}));
 app.use(bodyParser.json());
 
 // APIs
-app.get('/db', function(req, res){
-	var db = new sqlite3.Database('db/people.db');
-	db.all('SELECT * FROM people', function(err, row){
-		if(err) throw err;
-		res.json(row);
-	}).close();
-});
+require('./routes')(app, sqlite3);
 
 // Get Angular app
 app.get('*', function(req, res){

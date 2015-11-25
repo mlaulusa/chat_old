@@ -12,6 +12,10 @@ angular.module('chat', ['chat.services', 'chat.controllers', 'ui.router'])
 				'forgotPassword@signin': {
 					templateUrl: 'templates/forgot.html',
 					controller: 'ForgotCtrl'
+				},
+				'signUp@signin': {
+					templateUrl: 'templates/signup.html',
+					controller: 'SignUpCtrl'
 				}
 			}
 		});

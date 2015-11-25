@@ -4,7 +4,7 @@
 var express = require('express'),
 	app = express(),
 	httpLog = require('morgan'),
-	log = require('bristol'),
+	log4js = require('log4js'),
 	methodOverride = require('method-override'),
 	bodyParser = require('body-parser'),
 	sqlite3 = require('sqlite3').verbose(),
@@ -12,8 +12,24 @@ var express = require('express'),
 	dbPath = process.cwd() + '/db/chat.db',
 	PORT = 8888;
 
+log4js.configure({
+	appenders: [{
+			type: 'console'
+		}, {
+			type: 'file',
+			filename: 'logs/chat.log',
+			category: 'chat'
+		}, {
+			type: 'file',
+			filename: 'logs/chat-dev.log',
+			category: 'chat-dev'
+		}]
+});
+
+var category = app.get('env') == 'development' ? 'chat-dev' : 'chat';
+
 app.bcrypt = require('bcrypt');
-app.log = log;
+app.log = log4js.getLogger(category);
 app.foreignKey = "PRAGMA foreign_keys = true";
 
 //================================================================
@@ -25,9 +41,6 @@ app.use(express.static('public'));
 app.use(methodOverride());
 app.use(bodyParser.urlencoded({'extended': 'true'}));
 app.use(bodyParser.json());
-
-var format = app.get('env') == 'development' ? 'human' : 'commonInfoModel';
-app.log.addTarget('console').withFormatter(format);
 
 //================================================================
 // Set up sqlite3 database if it doesn't exist					|| 
@@ -72,5 +85,5 @@ app.get('*', function(req, res){
 // Start server													|| 
 //================================================================
 app.listen(PORT, function(){
-	app.log.info("Listening on port " + PORT + " in a " + app.get('env') + " environment");
+	app.log.info("Starting server on port %d in a %s environment", PORT, app.get('env'));
 });

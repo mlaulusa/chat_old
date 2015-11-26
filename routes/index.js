@@ -60,12 +60,11 @@ module.exports = function(app, sqlite3){
 					db.get('SELECT id FROM users WHERE username = $username', {
 						$username: req.body.username
 					}, function(err, data){
-						app.log.debug(data);
 						if(err) throw err;
 						var db1 = new sqlite3.Database('db/chat.db');
 						db1.run(app.foreignKey);
 						db1.run('INSERT INTO user_information (id, first_name, last_name, email, date_created) VALUES ($id, $first, $last, $email, $created)', {
-							$id: 2,
+							$id: data.id,
 							$first: req.body.first_name,
 							$last: req.body.last_name,
 							$email: req.body.email,
@@ -83,7 +82,6 @@ module.exports = function(app, sqlite3){
 		});
 	});
 
-
 //==================================================================================
 // Sign in, test inputted password with database password
 //==================================================================================
@@ -95,26 +93,37 @@ module.exports = function(app, sqlite3){
 			app.log.debug(data);
 			if(err) {
 				app.log.warn('Returned error on database statement "SELECT * FROM users WHERE username = %s"', req.body.username);
-				app.log.error(err);
 				app.log.debug('Request body:\n' + req.body);
+				app.log.error(err);
 				throw err;
-			} else {
+			} else if(data) {
+				app.log.debug('Found user, testing password against database password');
 				app.bcrypt.compare(req.body.password, data.password, function(err, match){
 					if(err) {
 						app.log.error(err);
 						throw err;
 					}
 					if(match) {
-						app.log.info('Password accepted for %s', req.body.username);
+						app.log.info('%s signed in', req.body.username);
 						res.json({
-							match: match,
+							type: "success",
+							message: "Welcome",
 							id: data.id,
 							username: data.username
 						});
 					} else {
 						app.log.info('Password rejected');
-						res.json({match: match});
+						res.json({
+							type: "error",
+							message: "Wrong password"
+						});
 					}
+				});
+			} else {
+				app.log.info('No match found for %s', req.body.username);
+				res.json({
+					type: "error", 
+					message: "Wrong username"
 				});
 			}
 		});

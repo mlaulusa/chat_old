@@ -1,15 +1,17 @@
-<div class="row centered">
-	<div class="col-md-offset-4 col-md-3" style="border: solid 1px Gainsboro; border-radius: 8px; padding: 20px 10px;">
-		<div class="form-group">
-			<label for="usernameTextbox">Username</label>
-			<input class="form-control" type="text"ng-model="user.username" placeholder="Username">
-		</div>
-		<div class="form-group">
-			<label for="passwordTextbox">Password</label>
-			<input class="form-control" type="password" ng-model="user.password" placeholder="Password">
-		</div>
-		<div class="form-group">
-			<button class="btn btn-primary btn-block" ng-click="signin()">Submit</button>
-		</div>
+<div class="row" style="margin: 20% auto;">
+	<div class="col-md-offset-4 col-md-3" style="border: solid 1px Gainsboro; border-radius: 8px; padding: 10px 20px; background-color: #F5F5F5;">
+		<form>
+			<div class="form-group">
+				<label for="usernameTextbox">Username</label>
+				<input class="form-control" type="text"ng-model="user.username" placeholder="Username">
+			</div>
+			<div class="form-group">
+				<label for="passwordTextbox">Password</label>
+				<input class="form-control" type="password" ng-model="user.password" placeholder="Password">
+			</div>
+			<div class="form-group">
+				<button class="btn btn-primary btn-block" ng-click="signin()">Submit</button>
+			</div>
+		</form>
 	</div>
 </div>

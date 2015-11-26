@@ -1,12 +1,16 @@
-angular.module('chat.controllers', ['chat.services'])
-.controller('SignInCtrl', ['$scope', '$http', function($scope, $http){
+angular.module('chat.controllers', ['chat.services', 'ui-notification'])
+.controller('SignInCtrl', ['$scope', '$http', 'Notification', function($scope, $http, Notification){
+
 	$scope.signin = function(){
 		$http.post('/signin', $scope.user).then(function(res) {
-			console.log('Success');
-			console.log(res);
+			if(res.data.type == "error") {
+				Notification.error(res.data.message);
+			} else {
+				Notification.success(res.data.message);
+			}
 		}, function(res) {
-			console.log('Fail');
-			console.log(res);
+			console.log(res.data);
 		});
 	};
+
 }]);

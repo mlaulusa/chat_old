@@ -1,5 +1,6 @@
-angular.module('chat', ['chat.services', 'chat.controllers', 'ui.router'])
-.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider){
+angular.module('chat', ['chat.services', 'chat.controllers', 'ui.router', 'ui-notification'])
+.config(['$stateProvider', '$urlRouterProvider', 'NotificationProvider', function($stateProvider, $urlRouterProvider, NotificationProvider){
+// Angular UI routes
 	$urlRouterProvider.otherwise('/');
 	$stateProvider
 		.state('signin', {
@@ -19,4 +20,14 @@ angular.module('chat', ['chat.services', 'chat.controllers', 'ui.router'])
 				}
 			}
 		});
+	
+	NotificationProvider.setOptions({
+		delay: 10000,
+		startTop: 20,
+		startRight: 10,
+		verticalSpacing: 20,
+		horizontalSpacing: 20,
+		positionX: 'center',
+		positionY: 'top'
+	});
 }]);

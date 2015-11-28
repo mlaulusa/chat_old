@@ -1,17 +1,22 @@
 <div class="row" style="margin: 20% auto;">
 	<div class="col-md-offset-4 col-md-3" style="border: solid 1px Gainsboro; border-radius: 8px; padding: 10px 20px; background-color: #F5F5F5;">
-		<form>
+
+		<form name="signin_form" novalidate ng-submit="signin()">
+
 			<div class="form-group">
 				<label for="usernameTextbox">Username</label>
-				<input class="form-control" type="text"ng-model="user.username" placeholder="Username">
+				<input class="form-control" name="username" type="text "ng-model="user.username" placeholder="Username" required>
 			</div>
+
 			<div class="form-group">
 				<label for="passwordTextbox">Password</label>
-				<input class="form-control" type="password" ng-model="user.password" placeholder="Password">
+				<input class="form-control" name="password" type="password" ng-model="user.password" placeholder="Password" required>
 			</div>
+
 			<div class="form-group">
-				<button class="btn btn-primary btn-block" ng-click="signin()">Submit</button>
+				<button ng-disabled="signin_form.$invalid" type="submit" class="btn btn-primary btn-block">Submit</button>
 			</div>
 		</form>
+
 	</div>
 </div>

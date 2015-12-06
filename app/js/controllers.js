@@ -1,19 +1,13 @@
 angular.module('chat.controllers', ['chat.services', 'ui-notification'])
-.controller('SignInCtrl', ['$scope', '$http', 'Notification', function($scope, $http, Notification){
+.controller('SignInCtrl', ['$scope', 'Notification', 'ChatFactory', function($scope, Notification, ChatFactory){
 
 	$scope.signin = function(){
-		$http.post('/signin', $scope.user).then(function(res) {
-			// successful post call
-			if(res.data.type == "error") {
-				Notification.error(res.data.message);
+		ChatFactory.signin($scope.user).then(function(data){
+			if(data.foundMatch){
+				Notification.success("Welcome");
 			} else {
-				Notification.success(res.data.message);
-				$location.url('#/something')
+				Notification.error("Not a valid Username/Password combination");
 			}
-			// failed post call
-		}, function(res) {
-			console.log(res.data);
-			Notification.error('Unable to talk to the server');
 		});
 	};
 

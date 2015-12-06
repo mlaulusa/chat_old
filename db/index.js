@@ -1,31 +1,39 @@
-var fs = require('fs');
+var fs = require('fs'),
+    sqlite3 = require('sqlite3').verbose();
 
-module.exports = function(app, sqlite3) {
+module.exports = {
 
-app.foreignKey = "PRAGMA foreign_keys = true";
-app.db = "db/chat-" + app.get('env') + ".db";
+    setup: function (){
 
-  try {
+        // Set some global database variables
+        app.database = 'db/chat-' + app.get('env') + '.db';
+        app.foreignKey = 'PRAGMA foreign_keys = true';
 
-  	fs.accessSync(process.cwd() + '/' + app.db, fs.F_OK);
-  	app.log.info('SQLite3 database already created');
+        try {
 
-  } catch(err) {
+            fs.accessSync(process.cwd() + '/' + app.database, fs.F_OK);
+            app.log.info('SQLite3 database already created');
 
-  	app.log.warn(err);
-  	app.log.info('Creating SQLite3 database file');
+        } catch (err){
 
-  	fs.writeFileSync(app.db, '');
+            app.log.warn(err);
+            app.log.info('Creating SQLite3 database file');
 
-  	var db = new sqlite3.Database(app.db);
-  	db.serialize(function(){
+            fs.writeFileSync(app.database, '');
 
-  		app.log.info('Creating SQLite3 tables');
+            var db = new sqlite3.Database(app.database);
 
-  		db.run('CREATE TABLE users (id INTEGER PRIMARY KEY, username TEXT UNIQUE NOT NULL, password TEXT NOT NULL)');
-  		db.run('CREATE TABLE user_information (id INTEGER, first_name TEXT, last_name TEXT, email TEXT NOT NULL, date_created TEXT NOT NULL, FOREIGN KEY (id) REFERENCES users (id))');
-  		db.run('CREATE TABLE user_login (id INTEGER, login_date TEXT NOT NULL, FOREIGN KEY (id) REFERENCES users (id))');
-  	});
-  	db.close();
-  }
-}
+            db.serialize(function (){
+
+                app.log.info('Creating SQLite3 tables');
+
+                db.run('CREATE TABLE users (id BLOB PRIMARY KEY, username TEXT UNIQUE NOT NULL, password TEXT NOT NULL)');
+                db.run('CREATE TABLE user_information (id BLOB, first_name TEXT, last_name TEXT, email TEXT NOT NULL, date_created TEXT NOT NULL, FOREIGN KEY (id) REFERENCES users (id))');
+                db.run('CREATE TABLE user_login (id BLOB, login_date TEXT NOT NULL, FOREIGN KEY (id) REFERENCES users (id))');
+            });
+
+            db.close();
+        }
+    }
+
+};

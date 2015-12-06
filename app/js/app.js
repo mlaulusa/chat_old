@@ -20,7 +20,7 @@ angular.module('chat', ['chat.services', 'chat.controllers', 'ui.router', 'ui-no
 				}
 			}
 		});
-	
+
 	NotificationProvider.setOptions({
 		delay: 10000,
 		startTop: 20,
@@ -30,4 +30,8 @@ angular.module('chat', ['chat.services', 'chat.controllers', 'ui.router', 'ui-no
 		positionX: 'center',
 		positionY: 'top'
 	});
+}])
+.run([function(){
+	// run is ran when the app kicks off
+	console.log("Now running");
 }]);

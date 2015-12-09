@@ -35,6 +35,7 @@ app.use(bodyParser.json());
 // App variables
 //================================================================
 app.set('version', config.app.version);
+app.set('secret', config.secret);
 
 //================================================================
 // API routes													||
@@ -51,6 +52,6 @@ app.get('*', function (req, res){
 //================================================================
 // Start server													||
 //================================================================
-app.listen(config.port, function (){
-    app.log.info("Starting server on port %d in a %s environment", config.port, app.get('env'));
+app.listen(config.port || 8888, function (){
+    app.log.info("Starting server on port %d in a %s environment", config.port || 8888, app.get('env'));
 });

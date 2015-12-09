@@ -132,32 +132,35 @@ module.exports = {
                     $password: hash
                 }, function (err){
 
-                    if(err.code == 'SQLITE_CONSTRAINT'){
-                        app.log.warn('Database error at statement "INSERT INTO users (id, username, password) VALUES (%s, %s, %s)"', req.body.id, req.body.username, req.body.password);
+                    if(err){
+                        if(err.code == 'SQLITE_CONSTRAINT'){
+                            app.log.warn('Database error at statement "INSERT INTO users (id, username, password) VALUES (%s, %s, %s)"', req.body.id, req.body.username, req.body.password);
 
-                        app.log.error(err);
+                            app.log.error(err);
 
-                        res.status(400);
-                        res.json({
-                            confirmation: false,
-                            data: {
-                                msg: "There is a foreign key constraint"
-                            }
-                        });
-                    } else if(err){
-                        app.log.warn('Database error at statement "INSERT INTO users (id, username, password) VALUES (%s, %s, %s)"', req.body.id, req.body.username, req.body.password);
+                            res.status(400);
+                            res.json({
+                                confirmation: false,
+                                data: {
+                                    msg: "There is a foreign key constraint"
+                                }
+                            });
+                        } else {
+                            app.log.warn('Database error at statement "INSERT INTO users (id, username, password) VALUES (%s, %s, %s)"', req.body.id, req.body.username, req.body.password);
 
-                        app.log.error(err);
+                            app.log.error(err);
 
-                        res.status(400);
-                        res.json({
-                            confirmation: false,
-                            data: {
-                                msg: "An error inserting into table users"
-                            }
-                        });
+                            res.status(400);
+                            res.json({
+                                confirmation: false,
+                                data: {
+                                    msg: "An error inserting into table users"
+                                }
+                            });
+
+                        }
                     } else {
-                        app.log.info('Inserting into users');
+                        app.log.info('Inserting %s into users', req.body.username);
 
                         res.status(200);
                         res.json({
@@ -220,6 +223,67 @@ module.exports = {
             } else {
                 app.log.info('Database connection closed');
             }
+        });
+    },
+    authenticate: function (username, password){
+
+        return new Promise(function (resolve, reject){
+            var db = new sqlite3.Database(app.database);
+
+            db.run(app.foreignKey);
+
+            db.serialize(function (){
+
+                db.get('SELECT * FROM users WHERE username = $username', {
+                    $username: username
+                }, function (err, data){
+                    if(err){
+
+                        app.log.info('Error at statement "SELECT * FROM users WHERE username = %s"\n', username);
+                        app.log.error(err);
+                        reject(err);
+
+                    } else if(data){
+
+                        app.log.info('Found %s in users table', username);
+                        app.log.info(data);
+
+                        bcrypt.compare(password, data.password, function (err, match){
+                            if(err){
+
+                                app.log.info('Error comparing password and database hash for %s', username);
+                                app.log.error(err);
+                                reject(err);
+
+                            } else if(match){
+
+                                app.log.info('Password matched database for %s', username);
+                                resolve(data);
+
+                            } else {
+
+                                app.log.info('Password rejected for %s', username);
+                                reject('Password rejected');
+
+                            }
+                        });
+
+                    } else {
+
+                        app.log.info('%s was not found in users table', username);
+                        reject('User was not found in table');
+
+                    }
+                }).close(function (err){
+                    if(err){
+                        app.log.info("Database didn't close correctly");
+                        app.log.warn(err);
+                    } else {
+                        app.log.info("Database closed successfully");
+                    }
+                });
+            });
+
         });
     }
 };

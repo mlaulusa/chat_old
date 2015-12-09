@@ -275,8 +275,12 @@
 //
 //};
 
-var users = require('../db/users');
+var users = require('../db/users'),
+    auth = require('./auth');
 
+app.all('/api/*', require('../middleware/'));
+
+app.post('/api/login', auth.login);
 app.get('/api/users', users.getAll);
 //app.get('/api/users/:id', users.getOneByID);
 app.get('/api/users/:username', users.getOneByUsername);

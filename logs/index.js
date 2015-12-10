@@ -8,27 +8,27 @@ module.exports = {
                 limit: 100
             });
 
-        app.log = bunyan.createLogger(
-            {
+        app.log = bunyan.createLogger({
                 name: 'chat',
                 streams: [
                     {
-                        levels: 'error',
+                        level: 'error',
                         stream: process.stderr
                     },
                     {
-                        levels: 'info',
+                        level: 'info',
                         path: 'logs/chat' + '-' + app.get('env') + ".log"
                     },
                     {
-                        levels: 'trace',
+                        level: 'trace',
                         stream: process.stdout
                     },
                     {
-                        levels: 'trace',
+                        level: 'trace',
                         type: 'raw',
                         stream: ringbuffer
                     }]
-            })
+            });
+
     }
 };

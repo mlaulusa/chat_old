@@ -1,5 +1,7 @@
 node_modules
+config.js
 *.log
+logs/*.json
 *.db
 app/bower_components
 .idea

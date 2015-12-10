@@ -17,7 +17,7 @@ module.exports = {
                     },
                     {
                         level: 'info',
-                        path: 'logs/chat' + '-' + app.get('env') + ".log"
+                        path: 'logs/chat' + '-' + app.get('env') + ".log.json"
                     },
                     {
                         level: 'trace',

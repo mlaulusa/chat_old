@@ -119,6 +119,17 @@ module.exports = {
         });
     },
     create: function (req, res){
+
+        if(!req.body.username || !req.body.password){
+            res.status(401);
+            res.json({
+                confirmation: false,
+                data: {
+                    msg: "No username or password provided"
+                }
+            });
+        }
+
         var db = new sqlite3.Database(app.database);
 
         db.run(app.foreignKey);

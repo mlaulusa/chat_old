@@ -278,7 +278,7 @@
 var users = require('../db/users'),
     auth = require('./auth');
 
-app.all('/api/*', require('../middleware/'));
+//app.all('/api/*', require('../middleware/'));
 
 app.post('/api/login', auth.login);
 app.get('/api/users', users.getAll);
